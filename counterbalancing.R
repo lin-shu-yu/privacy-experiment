@@ -1,4 +1,8 @@
 # Script for counterbalancing / randomization for privacy experiment
+# 2x2 LS determine partition order (baseline is always first; 1 = passive, 2 = active)
+# 6x3 LS determine activity order (1-6 corresponds to fixed order: 'LMH','LHM','MHL','MLH','HLM','HML')
+#   where L=low intrusion; M=moderate intrusion; H=high intrusion
+#   block_n = partition order filled in with L/M/H order; NEED TO USE WITH PARTION 2x2 LS
 
 # Author: Mich Lin shuyulin [at] mit [dot] edu
 # Date created: 11 DEC 2025
@@ -171,6 +175,7 @@ partition_order[,3] <- latinsquare(2, reps=3, seed=1)[,2]
 # use 1-6 permutations as the different activity orders
 # randomize based on partial 6x6 (3x6) latin sq 
 # assign order into matrix for readability
+latinsquare(2, reps=3, seed=1) # partition order
 block_1 <- matrix(nrow = 6, ncol = 3)
 colnames(block_1) <- c('baseline','passive','active')
 intrusion_order <- c('LMH','LHM','MHL','MLH','HLM','HML')
@@ -182,7 +187,7 @@ for(i in 1:6){
 
 # repeat for second group/block
 latinsquare(2, reps=3, seed=2)
-latinsquare(6, reps=1, seed=2)
+# latinsquare(6, reps=1, seed=2)
 block_2 <- matrix(nrow = 6, ncol = 3)
 colnames(block_2) <- c('baseline','passive','active')
 intrusion_order <- c('LMH','LHM','MHL','MLH','HLM','HML')
@@ -194,7 +199,7 @@ for(i in 1:6){
 
 # repeat for third group/block
 latinsquare(2, reps=3, seed=3)
-latinsquare(6, reps=1, seed=3)
+# latinsquare(6, reps=1, seed=3)
 block_3 <- matrix(nrow = 6, ncol = 3)
 colnames(block_3) <- c('baseline','passive','active')
 intrusion_order <- c('LMH','LHM','MHL','MLH','HLM','HML')
@@ -206,7 +211,7 @@ for(i in 1:6){
 
 # repeat for fourth group/block
 latinsquare(2, reps=3, seed=4)
-latinsquare(6, reps=1, seed=4)
+# latinsquare(6, reps=1, seed=4)
 block_4 <- matrix(nrow = 6, ncol = 3)
 colnames(block_4) <- c('baseline','passive','active')
 intrusion_order <- c('LMH','LHM','MHL','MLH','HLM','HML')
@@ -218,7 +223,7 @@ for(i in 1:6){
 
 # repeat for fifth group/block
 latinsquare(2, reps=3, seed=5)
-latinsquare(6, reps=1, seed=5)
+# latinsquare(6, reps=1, seed=5)
 block_5 <- matrix(nrow = 6, ncol = 3)
 colnames(block_5) <- c('baseline','passive','active')
 intrusion_order <- c('LMH','LHM','MHL','MLH','HLM','HML')
@@ -230,7 +235,7 @@ for(i in 1:6){
 
 # repeat for sixth group/block
 latinsquare(2, reps=3, seed=6)
-latinsquare(6, reps=1, seed=6)
+# latinsquare(6, reps=1, seed=6)
 block_6 <- matrix(nrow = 6, ncol = 3)
 colnames(block_6) <- c('baseline','passive','active')
 intrusion_order <- c('LMH','LHM','MHL','MLH','HLM','HML')
