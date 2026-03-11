@@ -1,0 +1,45 @@
+//Author: Rachel Dunphy
+//Date created: idk
+//Date Last modified: 3/10/2026
+String last = "none";
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(3, INPUT_PULLUP);
+  pinMode(4, INPUT_PULLUP);
+  pinMode(5, INPUT_PULLUP);
+  Serial.begin(9600);
+  pinMode(13, OUTPUT);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  int bgreen = digitalRead(3);
+  int bgrey = digitalRead(4);
+  int byellow = digitalRead(5);
+  Serial.print("bgreen:");
+  Serial.println(bgreen);
+  Serial.print("bgrey:");
+  Serial.println(bgrey);
+  Serial.print("byellow:");
+  Serial.println(byellow);
+  Serial.print("Last Pressed: ");
+  Serial.println(last);
+  delay(100);
+
+//last pressed logic
+  if(bgreen==LOW) {
+    last = "green"; 
+    } else if(bgrey==LOW) {
+    last = "grey"; 
+    } else if(byellow==LOW){
+    last = "yellow";
+    } 
+
+//button logic
+  if (bgreen == LOW && bgrey == LOW && byellow == LOW ) { 
+    digitalWrite(13, HIGH);
+  } else {
+    digitalWrite(13, LOW);
+  }
+}
