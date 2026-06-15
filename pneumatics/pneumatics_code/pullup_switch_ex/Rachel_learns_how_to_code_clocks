@@ -1,0 +1,71 @@
+//Created by: Rachel Dunphy
+//Created on: 6/15/26
+//Last Modified on: 6/15/26
+//Purpose: Learning how to access the clock so I can integrate this into the buttons code
+//Notes: this literally took all day...I thought it would take an hour...I've learned that I am stupid and coding is stupid
+
+//extra things because apparently all code is stupid on its own :/
+#include "RTC.h"
+#include "WiFiS3.h"
+#include "WiFiUdp.h"
+#include "NTPClient.h"
+
+//network connections
+const char* ssid     = "iPhone (54)";
+const char* password = "MY ACTUAL PASSWORD";
+
+//idk what this really is
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org", -5*3600);
+
+//setup shit
+void setup() {
+  Serial.begin(115200);
+  while (!Serial);
+
+  //Connect to wifi aka my hotspot
+  Serial.print("Connecting to Wi-Fi...");
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println(" Connected!");
+
+//time stuff
+  RTC.begin();
+  timeClient.begin();
+  if (timeClient.update()) {
+    unsigned long epochTime = timeClient.getEpochTime();
+    RTCTime localTime(epochTime);
+    RTC.setTime(localTime);
+    Serial.println("RTC fucking finally synchronized!");
+  } else {
+    Serial.println("NTP update failed...aka coding sucks");
+  }
+
+  WiFi.disconnect();
+}
+
+void loop() {
+  // Read time
+  RTCTime currentTime;
+  RTC.getTime(currentTime);
+
+  // Print the timestamp and date
+  Serial.print("Unix Timestamp: ");
+  Serial.println(currentTime.getUnixTime());
+  Serial.print("Date: ");
+  Serial.print(Month2int(currentTime.getMonth()));
+  Serial.print("-");
+  Serial.print(currentTime.getDayOfMonth());
+  Serial.print("-");
+  Serial.println(currentTime.getYear());
+  Serial.print("Time:");
+  Serial.print(currentTime.getHour());
+  Serial.print(":");
+  Serial.print(currentTime.getMinutes());
+  Serial.print(":");
+  Serial.println(currentTime.getSeconds());
+  delay(5000); 
+}
