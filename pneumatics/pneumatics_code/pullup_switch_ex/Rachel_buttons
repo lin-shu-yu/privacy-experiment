@@ -1,7 +1,24 @@
 //Author: Rachel Dunphy
 //Date created: idk
 //Date Last modified: 6/13/2026
+
+//extra libraries/methods I forgor what they are called
+#include "RTC.h"
+#include "WiFiS3.h"
+#include "WiFiUdp.h"
+#include "NTPClient.h"
+
+//variables
+int hours;
 String last = "none";
+
+//network connection information
+const char* ssid     = "iPhone (54)";
+const char* password = "**********";
+
+//more network stuff
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org", -5*3600)
 
 void setup() {
   // put your setup code here, to run once:
