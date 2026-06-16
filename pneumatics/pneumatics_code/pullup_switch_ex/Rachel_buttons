@@ -1,6 +1,7 @@
 //Author: Rachel Dunphy
 //Date created: idk
-//Date Last modified: 6/13/2026
+//Date Last modified: 6/16/2026
+//Notes: This should not have taken me so long but idc I am still proud of myself
 
 //extra libraries/methods I forgor what they are called
 #include "RTC.h"
@@ -10,56 +11,90 @@
 
 //variables
 int hours;
-String last = "none";
+String pressed = "none";
 
 //network connection information
 const char* ssid     = "iPhone (54)";
-const char* password = "**********";
+const char* password = "Mercury2007!!";
 
 //more network stuff
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "pool.ntp.org", -5*3600)
+//changes with timechange (-5 during standard time and -4 during dls)
+NTPClient timeClient(ntpUDP, "pool.ntp.org", -4*3600);
 
+//function for time I hope this works =<
+void record(String bcolor){
+  RTCTime currentTime;
+  RTC.getTime(currentTime);
+  Serial.print(bcolor);
+  Serial.print(" pressed: ");
+  Serial.print(Month2int(currentTime.getMonth()));
+  Serial.print("-");
+  Serial.print(currentTime.getDayOfMonth());
+  Serial.print("-");
+  Serial.print(currentTime.getYear());
+  Serial.print(" ");
+  Serial.print(currentTime.getHour());
+  Serial.print(":");
+  Serial.print(currentTime.getMinutes());
+  Serial.print(":");
+  Serial.println(currentTime.getSeconds());
+}
+
+//set up stuff
 void setup() {
-  // put your setup code here, to run once:
+  Serial.begin(115200);
+  while (!Serial);
+
+  //WiFi
+  Serial.print("Connecting to Wi-Fi...");
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED){
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("Connected!");
+
+  //time set up
+  RTC.begin();
+  timeClient.begin();
+  if(timeClient.update()){
+    unsigned long epochTime= timeClient.getEpochTime();
+    RTCTime localTime(epochTime);
+    RTC.setTime(localTime);
+    Serial.println("RTC synchronized teehee");
+  }else{
+    Serial.println("NTP update failed grrr");
+  }
+  WiFi.disconnect();
+
+ //pin stuff
   pinMode(3, INPUT_PULLUP);
   pinMode(4, INPUT_PULLUP);
   pinMode(5, INPUT_PULLUP);
-  Serial.begin(9600);
   pinMode(13, OUTPUT);
 }
+
+//loopdy loop
 void loop() {
-  // put your main code here, to run repeatedly:
   int bgreen = digitalRead(3);
   int bgrey = digitalRead(4);
   int byellow = digitalRead(5);
-  Serial.print("bgreen:");
-  Serial.println(bgreen);
-  Serial.print("bgrey:");
-  Serial.println(bgrey);
-  Serial.print("byellow:");
-  Serial.println(byellow);
-  Serial.print("Last Pressed: ");
-  Serial.println(last);
-  delay(100);
+  delay(250);
 
-//last pressed logic
-  if(bgreen==LOW) {
-    last = "green"; 
-    } else if(bgrey==LOW) {
-    last = "grey"; 
-    } else if(byellow==LOW){
-    last = "yellow";
-    } 
 
-//button logic
+ //button logic
   if (bgreen == LOW) { 
     digitalWrite(13, HIGH);
+    record("green");
   } else if (bgrey == LOW) {
     digitalWrite(13, LOW);
+    record("grey");
   } else if (byellow == LOW) {
     digitalWrite(13,HIGH);
+    record("yellow");
     delay(1000);
     digitalWrite(13,LOW);
   }
+}
 }
