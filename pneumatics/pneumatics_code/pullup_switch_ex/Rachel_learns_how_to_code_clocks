@@ -16,7 +16,8 @@ const char* password = "MY ACTUAL PASSWORD";
 
 //idk what this really is
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "pool.ntp.org", -5*3600);
+//this part has to be updated during time change
+NTPClient timeClient(ntpUDP, "pool.ntp.org", -4*3600);
 
 //setup shit
 void setup() {
