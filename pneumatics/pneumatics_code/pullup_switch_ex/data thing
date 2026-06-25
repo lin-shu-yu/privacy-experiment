@@ -1,1 +1,83 @@
-idk how to do any of this yet so this might be scary
+#created idk when
+#created by: Rachel Dunphy
+
+import matplotlib
+matplotlib.use('TkAgg')
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+#partition
+part=pd.read_excel(r'C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\partition-survey_scores.xlsx')
+part=part.drop(['Email','SID','Total Score','Max Points','Status','Submission ID','Submission Time', 'Lateness (H:M:S)',
+                  'View Count', 'Submission Count'], axis=1)
+part=part.rename(columns={'1: privacy-no_covering (6.0 pts)':'privacy-no_cover','2: privacy-full_covering (6.0 pts)':'privacy-full_cover',
+                          '3: privacy-med_covering (6.0 pts)':'privacy-med_cover','4: privacy-open_covering (6.0 pts)':'privacy-open_covering',
+                          '5: choice (6.0 pts)':'choice','6: experience (6.0 pts)':'experience'})
+  
+#partition plot
+plt.figure(figsize=(12,6))
+plt.boxplot([part['privacy-no_cover'].dropna(),part['privacy-full_cover'].dropna(), part['privacy-med_cover'].dropna(),
+             part['privacy-open_covering'].dropna(),part['choice'].dropna(),part['experience'].dropna()],
+            tick_labels=['Privacy-No Cover','Privacy-Full Cover','Privacy-Medium Cover','Privacy-Open Cover','choice','experience'])
+plt.ylabel('Privacy/Necessity for Comfort/Comfort')
+plt.grid(axis='y',linestyle='--', alpha=0.7)
+##plt.show()
+
+#privs
+def clean(df):
+    clean_df=df.drop(['Email','SID','Total Score','Max Points','Status','Submission ID','Submission Time', 'Lateness (H:M:S)',
+                  'View Count', 'Submission Count'], axis=1)
+    clean_df=clean_df.rename(columns={'1: invasiveness (6.0 pts)':'invasiveness', '2: privacy-desired (6.0 pts)':'privacy-desired',
+                            '3: privacy-achieved (6.0 pts)': 'privacy-achieved','4: awareness (6.0 pts)':'awareness',
+                            '5:worry-see (6.0 pts)':'worry-see','6: worry-hear (6.0 pts)':'worry-hear','7: comfort (6.0 pts)':'comfort',
+                            '8: personal-space (6.0 pts)':'personal space','9: energy (6.0 pts)':'energy', '10: sightlines (6.0 pts)':'sightlines',
+                            '11: notice (6.0 pts)': 'notice'})
+    return clean_df
+priv1=pd.read_excel(r'C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-1_scores.xlsx')
+priv1=clean(priv1)
+priv2=pd.read_excel(r'C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-2_scores.xlsx')
+priv2=clean(priv2)
+priv3=pd.read_excel(r'C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-3_scores.xlsx')
+priv3=clean(priv3)
+priv4=pd.read_excel(r'C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-4_scores.xlsx')
+priv4=clean(priv4)
+priv5=pd.read_excel(r'C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-5_scores.xlsx')
+priv5=clean(priv5)
+priv6=pd.read_excel(r'C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-5_scores.xlsx')
+priv6=clean(priv6)
+priv7=pd.read_excel(r'C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-7_scores.xlsx')
+priv7=clean(priv7)
+priv8=pd.read_excel(r'C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-8_scores.xlsx')
+priv8=clean(priv8)
+priv9=pd.read_excel(r'C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-9_scores.xlsx')
+priv9=clean(priv9)
+priv10=pd.read_excel(r'C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-10_scores.xlsx')
+priv10=clean(priv10)
+priv11=pd.read_excel(r"C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-11_scores.xlsx")
+priv11=clean(priv11)
+priv12=pd.read_excel(r"C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-12_scores.xlsx")
+priv12=clean(priv12)
+priv13=pd.read_excel(r"C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-13_scores.xlsx")
+priv13=clean(priv13)
+priv14=pd.read_excel(r"C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-14_scores.xlsx")
+priv14=clean(priv14)
+priv15=pd.read_excel(r"C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-15_scores.xlsx")
+priv15=clean(priv15)
+priv16=pd.read_excel(r"C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-16_scores.xlsx")
+priv16=clean(priv16)
+priv17=pd.read_excel(r"C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-17_scores.xlsx")
+priv17=clean(priv17)
+priv18=pd.read_excel(r"C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-18_scores.xlsx")
+priv18=clean(priv18)
+
+cb=pd.read_excel(r"C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\counterbalancing.xlsx",'Condition orders')
+cb=cb.drop('Unnamed: 0', axis=1)
+cb=cb.dropna()
+cb=cb.rename(columns={'Unnamed: 3': 'Con1','Unnamed: 4':'Con2', 'Unnamed: 5': 'Con3'})
+
+dem=pd.read_excel(r"C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\Demographics_scores.xlsx")
+dem=dem.drop(['Email','SID','Total Score','Max Points','Status','Submission ID','Submission Time', 'Lateness (H:M:S)',
+                  'View Count', 'Submission Count'], axis=1)
+
+
