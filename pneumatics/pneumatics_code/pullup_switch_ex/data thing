@@ -1,5 +1,7 @@
-#created idk when
 #created by: Rachel Dunphy
+#created: some day in early June
+#last modified: 6/25/2026
+#notes: this produces nothing of use
 
 import matplotlib
 matplotlib.use('TkAgg')
