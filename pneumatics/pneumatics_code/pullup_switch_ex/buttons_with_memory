@@ -16,8 +16,9 @@ int hours;
 String pressed = "none";
 
 //network connection information
+//add actual password for connecting to my phone
 const char* ssid     = "iPhone (54)";
-const char* password = "Mercury2007!!";
+const char* password = "MY ACTUAL PASSWORD";
 
 //file and microchip stuff
 const in chipSelect = //some number;
