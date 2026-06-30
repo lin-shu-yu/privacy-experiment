@@ -1,0 +1,55 @@
+//Author: Rachel Dunphy
+//Date created: 6/30/2026
+//Date Last modified: 6/30/2026
+//Notes: this reads the logs from the buttons
+
+//extra libraries/methods I forgor what they are called
+#include <SPI.h>
+#include <SD.h>
+
+//file and microchip stuff
+const int chipSelect = 6;
+File bFile;
+
+//reading function
+void readLog(){
+  SD.end();
+  if (!SD.begin(chipSelect, SPI_QUARTER_SPEED)){
+    Serial.println("something is failing, restart");
+    return;
+  }
+  File f = SD.open("btnlog.txt", FILE_READ);
+  if (f) {
+    Serial.println("---- button log start ----");
+    while (f.available()) {
+      Serial.write(f.read());
+    }
+    Serial.println("---- button log end ----");
+    f.close();
+  } else {
+    Serial.println("Could not open file for reading :(");
+  }
+}
+
+//set up stuff
+void setup(){ 
+  Serial.begin(115200);
+  unsigned long startTime = millis();
+  while (!Serial && millis() - startTime < 3000);
+  
+  delay(5000);
+
+  Serial.println("Starting SD setup...");
+  if (!SD.begin(chipSelect, SPI_QUARTER_SPEED)){
+    Serial.println("Memory card set up failed :(");
+    while (1);
+  }
+  Serial.println("Memory card successfully set up!");
+  
+  readLog();
+
+}
+
+//loopdy loop
+void loop() {
+}
