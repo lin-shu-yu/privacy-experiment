@@ -16,12 +16,11 @@ int hours;
 String pressed = "none";
 
 //network connection information
-//add actual password for connecting to my phone
 const char* ssid     = "iPhone (54)";
-const char* password = "MY ACTUAL PASSWORD";
+const char* password = MY PASSWORD;
 
 //file and microchip stuff
-const in chipSelect = //some number;
+const int chipSelect = 6;
 File bFile;
 
 //more network stuff
@@ -31,9 +30,13 @@ NTPClient timeClient(ntpUDP, "pool.ntp.org", -4*3600);
 
 //function for time I hope this works =<
 void record(String bcolor){
+  if (!SD.begin(chipSelect, SPI_QUARTER_SPEED)) {
+    Serial.println("SD re-init failed");
+    return;
+  }
   RTCTime currentTime;
   RTC.getTime(currentTime);
-  bFile = SD.open("button_records.txt", FILE_WRITE);
+  bFile = SD.open("btnlog.txt", FILE_WRITE);
   if (bFile) {
     bFile.print(bcolor);
     bFile.print(" pressed: ");
@@ -83,7 +86,7 @@ void setup() {
 
  //memory card stuff
  Serial.println("Setting up memory card!");
- if (!SD.begin(chipSelect)){
+ if (!SD.begin(chipSelect, SPI_QUARTER_SPEED)){
   Serial.println("Memory card set up failed :(");
   while (1); //haults code
   }
@@ -93,7 +96,7 @@ void setup() {
   pinMode(3, INPUT_PULLUP);
   pinMode(4, INPUT_PULLUP);
   pinMode(5, INPUT_PULLUP);
-  pinMode(13, OUTPUT);
+  pinMode(7, OUTPUT);
 }
 
 //loopdy loop
@@ -106,15 +109,15 @@ void loop() {
 
  //button logic
   if (bgreen == LOW) { 
-    digitalWrite(13, HIGH);
     record("green");
+    digitalWrite(7, HIGH);
   } else if (bgrey == LOW) {
-    digitalWrite(13, LOW);
     record("grey");
+    digitalWrite(7, LOW);
   } else if (byellow == LOW) {
-    digitalWrite(13,HIGH);
-    record("yellow");
+    record("grey");
+    digitalWrite(7,HIGH);
     delay(1000);
-    digitalWrite(13,LOW);
+    digitalWrite(7,LOW);
   }
 }
