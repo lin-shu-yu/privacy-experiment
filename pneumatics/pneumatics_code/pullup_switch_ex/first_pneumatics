@@ -17,7 +17,7 @@ String pressed = "none";
 
 //network connection information
 const char* ssid     = "iPhone (54)";
-const char* password = "Mercury2007!!";
+const char* password = MY PASSWORD;
 
 //file and microchip stuff
 const int chipSelect = 6;
