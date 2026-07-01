@@ -1,1 +1,99 @@
+//Author: Rachel Dunphy
+//Date created: idk
+//Date Last modified: 07/01/2026
+//Notes: Used for first test of pump circuit w/o valve
 
+//extra libraries/methods I forgor what they are called
+#include "RTC.h"
+#include "WiFiS3.h"
+#include "WiFiUdp.h"
+#include "NTPClient.h"
+
+//variables
+int hours;
+String pressed = "none";
+
+//network connection information
+const char* ssid     = "iPhone (54)";
+const char* password = MY PASSWORD;
+
+//more network stuff
+WiFiUDP ntpUDP;
+//changes with timechange (-5 during standard time and -4 during dls)
+NTPClient timeClient(ntpUDP, "pool.ntp.org", -4*3600);
+
+//function for time I hope this works =<
+void record(String bcolor){
+  RTCTime currentTime;
+  RTC.getTime(currentTime);
+  Serial.print(bcolor);
+  Serial.print(" pressed: ");
+  Serial.print(Month2int(currentTime.getMonth()));
+  Serial.print("-");
+  Serial.print(currentTime.getDayOfMonth());
+  Serial.print("-");
+  Serial.print(currentTime.getYear());
+  Serial.print(" ");
+  Serial.print(currentTime.getHour());
+  Serial.print(":");
+  Serial.print(currentTime.getMinutes());
+  Serial.print(":");
+  Serial.println(currentTime.getSeconds());
+}
+
+//set up stuff
+void setup() {
+  Serial.begin(115200);
+  while (!Serial);
+
+  //WiFi
+  Serial.print("Connecting to Wi-Fi...");
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED){
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("Connected!");
+
+  //time set up
+  RTC.begin();
+  timeClient.begin();
+  if(timeClient.update()){
+    unsigned long epochTime= timeClient.getEpochTime();
+    RTCTime localTime(epochTime);
+    RTC.setTime(localTime);
+    Serial.println("RTC synchronized teehee");
+  }else{
+    Serial.println("NTP update failed grrr");
+  }
+  WiFi.disconnect();
+
+ //pin stuff
+  pinMode(2, INPUT_PULLUP);
+  pinMode(3, INPUT_PULLUP);
+  pinMode(4, INPUT_PULLUP);
+  pinMode(9, OUTPUT);
+}
+
+//loopdy loop
+void loop() {
+  int bgreen = digitalRead(2);
+  int bgrey = digitalRead(3);
+  int byellow = digitalRead(4);
+  delay(250);
+
+
+ //button logic
+  if (bgreen == LOW) { 
+    digitalWrite(9, HIGH);
+    record("green");
+  } else if (bgrey == LOW) {
+    digitalWrite(9, LOW);
+    record("grey");
+  } else if (byellow == LOW) {
+    digitalWrite(9,HIGH);
+    record("yellow");
+    delay(1000);
+    digitalWrite(9,LOW);
+  }
+}
