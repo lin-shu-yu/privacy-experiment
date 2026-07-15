@@ -1,13 +1,14 @@
 #created by: Rachel Dunphy
 #created: some day in early June
-#last modified: 6/25/2026
-#notes: this produces nothing of use
+#last modified: 7/15/2026
+#notes: this kind of does something now
 
 import matplotlib
 matplotlib.use('TkAgg')
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+
 
 #partition
 part=pd.read_excel(r'C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\partition-survey_scores.xlsx')
@@ -16,6 +17,7 @@ part=part.drop(['Email','SID','Total Score','Max Points','Status','Submission ID
 part=part.rename(columns={'1: privacy-no_covering (6.0 pts)':'privacy-no_cover','2: privacy-full_covering (6.0 pts)':'privacy-full_cover',
                           '3: privacy-med_covering (6.0 pts)':'privacy-med_cover','4: privacy-open_covering (6.0 pts)':'privacy-open_covering',
                           '5: choice (6.0 pts)':'choice','6: experience (6.0 pts)':'experience'})
+
   
 #partition plot
 plt.figure(figsize=(12,6))
@@ -25,6 +27,8 @@ plt.boxplot([part['privacy-no_cover'].dropna(),part['privacy-full_cover'].dropna
 plt.ylabel('Privacy/Necessity for Comfort/Comfort')
 plt.grid(axis='y',linestyle='--', alpha=0.7)
 ##plt.show()
+
+
 
 #privs
 def clean(df):
@@ -36,6 +40,7 @@ def clean(df):
                             '8: personal-space (6.0 pts)':'personal space','9: energy (6.0 pts)':'energy', '10: sightlines (6.0 pts)':'sightlines',
                             '11: notice (6.0 pts)': 'notice'})
     return clean_df
+    
 priv1=pd.read_excel(r'C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-1_scores.xlsx')
 priv1=clean(priv1)
 priv2=pd.read_excel(r'C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-2_scores.xlsx')
@@ -73,13 +78,72 @@ priv17=clean(priv17)
 priv18=pd.read_excel(r"C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\achieved-privacy-18_scores.xlsx")
 priv18=clean(priv18)
 
+privs=[priv1,priv2,priv3,priv4,priv5,priv6,priv7,priv8,priv9,priv10,priv11,priv12,priv13,priv14,priv15,priv16,priv17,priv18]
+
+
+
+#counterbalancing
 cb=pd.read_excel(r"C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\counterbalancing.xlsx",'Condition orders')
 cb=cb.drop('Unnamed: 0', axis=1)
 cb=cb.dropna()
 cb=cb.rename(columns={'Unnamed: 3': 'Con1','Unnamed: 4':'Con2', 'Unnamed: 5': 'Con3'})
 
+def cln(df,name):
+    clean_df=df.iloc[17:37, 0:2]
+    clean_df=clean_df.drop('baseline ',axis=1)
+    clean_df=clean_df.drop([23,30])
+    clean_df.reset_index(drop=True, inplace=True)
+    new_labels = {old: new for old, new in zip(range(0,21), range(1, 19))}
+    clean_df=clean_df.rename(index=new_labels)
+    clean_df=clean_df.rename(columns={'passive': name})
+    clean_df=clean_df.rename(columns={'active': name})
+    return clean_df
+
+pathway=r"C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\counterbalancing.xlsx"
+sheet_to_name = {
+    'C12': 'p1',  'C8': 'p2',   'C6': 'p3',  'C11': 'p4',  'C14': 'p5',
+    'C10': 'p6',  'C23': 'p7',  'C5': 'p8',  'C15': 'p9',  'C9': 'p10',
+    'C7': 'p11',  'C3': 'p12', 'C17': 'p13', 'C4': 'p14', 'C13': 'p15',
+    'C22': 'p16', 'C20': 'p17', 'C2': 'p18', 'C29': 'p19', 'C19':'p21','C1': 'p23',
+    'C21': 'p24', 'C25': 'p26', 'C30':'p27','C24': 'p28', 'C26': 'p29', 'C16': 'p30',
+    'C28': 'p31', 'C18': 'p32', 'C27': 'p33',
+}
+participants={}
+for sheet, name in sheet_to_name.items():
+    df = pd.read_excel(pathway, sheet)
+    participants[name] = cln(df, name)
+
+
+
+#demographics
 dem=pd.read_excel(r"C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\Demographics_scores.xlsx")
 dem=dem.drop(['Email','SID','Total Score','Max Points','Status','Submission ID','Submission Time', 'Lateness (H:M:S)',
                   'View Count', 'Submission Count'], axis=1)
 
+#checking activity invasiveness level
+invasiveness_by_activity={}
+for order_pos, df in enumerate(privs,start=1):
+    df=df.copy()
+    df['Name'] = df['Name'].str.strip().str.lower()
+    invasiveness_by_activity[order_pos] = df.set_index('Name')['invasiveness']
 
+records=[]
+for order_pos, inv_series in invasiveness_by_activity.items():
+    for name, inv_num in inv_series.items():
+        if name not in participants:
+            continue
+        activity_type=participants[name].loc[order_pos, name]
+        records.append({
+            'participant': name,
+            'activity': activity_type,
+            'invasiveness': inv_num
+            })
+fat_df=pd.DataFrame(records)
+fat_df['activity']=fat_df['activity'].str.strip()
+inv_df=fat_df.pivot_table(
+    index='activity',
+    columns='participant',
+    values='invasiveness',
+    aggfunc='mean'
+    )
+inv_df=inv_df.reset_index()
