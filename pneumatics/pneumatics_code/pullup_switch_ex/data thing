@@ -1,7 +1,5 @@
+#created idk when
 #created by: Rachel Dunphy
-#created: some day in early June
-#last modified: 7/15/2026
-#notes: this kind of does something now
 
 import matplotlib
 matplotlib.use('TkAgg')
@@ -20,12 +18,12 @@ part=part.rename(columns={'1: privacy-no_covering (6.0 pts)':'privacy-no_cover',
 
   
 #partition plot
-plt.figure(figsize=(12,6))
-plt.boxplot([part['privacy-no_cover'].dropna(),part['privacy-full_cover'].dropna(), part['privacy-med_cover'].dropna(),
-             part['privacy-open_covering'].dropna(),part['choice'].dropna(),part['experience'].dropna()],
-            tick_labels=['Privacy-No Cover','Privacy-Full Cover','Privacy-Medium Cover','Privacy-Open Cover','choice','experience'])
-plt.ylabel('Privacy/Necessity for Comfort/Comfort')
-plt.grid(axis='y',linestyle='--', alpha=0.7)
+#plt.figure(figsize=(12,6))
+#plt.boxplot([part['privacy-no_cover'].dropna(),part['privacy-full_cover'].dropna(), part['privacy-med_cover'].dropna(),
+             #part['privacy-open_covering'].dropna(),part['choice'].dropna(),part['experience'].dropna()],
+            #tick_labels=['Privacy-No Cover','Privacy-Full Cover','Privacy-Medium Cover','Privacy-Open Cover','choice','experience'])
+#plt.ylabel('Privacy/Necessity for Comfort/Comfort')
+#plt.grid(axis='y',linestyle='--', alpha=0.7)
 ##plt.show()
 
 
@@ -147,3 +145,37 @@ inv_df=fat_df.pivot_table(
     aggfunc='mean'
     )
 inv_df=inv_df.reset_index()
+
+low_act=['time origami','LEGO','med kit','fastener assembly','component sorting','PVT']
+med_act=['talk PI','IPIP','demographics','NFP introspective','NFP behavioral']
+high_act=['nose swab','cheek swab','change clothes','floss','talk relationship']
+
+low_df=fat_df[fat_df['activity'].isin(low_act)]
+low_inv=low_df.pivot_table(
+    index='activity',
+    columns='participant',
+    values='invasiveness',
+    aggfunc='mean'
+    )
+data_low_plot=[low_inv.iloc[i,1:].dropna() for i in range(len(low_inv))]
+llabels=low_inv.index.tolist()
+
+med_df=fat_df[fat_df['activity'].isin(med_act)]
+med_inv=med_df.pivot_table(
+    index='activity',
+    columns='participant',
+    values='invasiveness',
+    aggfunc='mean'
+    )
+data_med_plot=[med_inv.iloc[i,1:].dropna() for i in range(len(med_inv))]
+mlabels=med_inv.index.tolist()
+
+high_df=fat_df[fat_df['activity'].isin(high_act)]
+high_inv=high_df.pivot_table(
+    index='activity',
+    columns='participant',
+    values='invasiveness',
+    aggfunc='mean'
+    )
+data_high_plot=[high_inv.iloc[i,1:].dropna() for i in range(len(high_inv))]
+hlabels=high_inv.index.tolist()
