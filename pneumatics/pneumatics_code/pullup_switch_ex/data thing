@@ -1,5 +1,6 @@
-#created idk when
+#created: Early June 2026
 #created by: Rachel Dunphy
+#last updated: 7/20/26
 
 import matplotlib
 matplotlib.use('TkAgg')
@@ -179,3 +180,58 @@ high_inv=high_df.pivot_table(
     )
 data_high_plot=[high_inv.iloc[i,1:].dropna() for i in range(len(high_inv))]
 hlabels=high_inv.index.tolist()
+
+
+#checking desired-privacy level
+privacy_desired_act={}
+for order_pos, df in enumerate(privs,start=1):
+    df=df.copy()
+    df['Name'] = df['Name'].str.strip().str.lower()
+    privacy_desired_act[order_pos] = df.set_index('Name')['privacy-desired']
+desired_records=[]
+for order_pos, des_series in privacy_desired_act.items():
+    for name, des_num in des_series.items():
+        if name not in participants:
+            continue
+        activity_type=participants[name].loc[order_pos, name]
+        desired_records.append({
+            'participant':name,
+            'activity': activity_type,
+            'priv_desired': des_num,
+            })
+fat_des=pd.DataFrame(desired_records)
+fat_des['activity']=fat_des['activity'].str.strip()
+des_df=fat_des.pivot_table(
+    index='activity',
+    columns='participant',
+    values='priv_desired',
+    aggfunc='mean'
+    )
+des_df=des_df.reset_index()
+
+low_des_fat=fat_des[fat_des['activity'].isin(low_act)]
+low_des_df=low_des_fat.pivot_table(
+    index='activity',
+    columns='participant',
+    values='priv_desired',
+    aggfunc='mean'
+    )
+data_low_des_plot=[low_des_df.iloc[i,1:].dropna() for i in range(len(low_des_df))]
+
+med_des_fat=fat_des[fat_des['activity'].isin(med_act)]
+med_des_df=med_des_fat.pivot_table(
+    index='activity',
+    columns='participant',
+    values='priv_desired',
+    aggfunc='mean'
+    )
+data_med_des_plot=[med_des_df.iloc[i,1:].dropna() for i in range(len(med_des_df))]
+
+high_des_fat=fat_des[fat_des['activity'].isin(high_act)]
+high_des_df=high_des_fat.pivot_table(
+    index='activity',
+    columns='participant',
+    values='priv_desired',
+    aggfunc='mean'
+    )
+data_high_des_plot=[high_des_df.iloc[i,1:].dropna() for i in range(len(high_des_df))]
