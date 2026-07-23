@@ -1,6 +1,6 @@
 #created: Early June 2026
 #created by: Rachel Dunphy
-#last updated: 7/20/26
+#last updated: 7/23/26
 
 import matplotlib
 matplotlib.use('TkAgg')
@@ -112,12 +112,6 @@ for sheet, name in sheet_to_name.items():
     df = pd.read_excel(pathway, sheet)
     participants[name] = cln(df, name)
 
-
-
-#demographics
-dem=pd.read_excel(r"C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\Demographics_scores.xlsx")
-dem=dem.drop(['Email','SID','Total Score','Max Points','Status','Submission ID','Submission Time', 'Lateness (H:M:S)',
-                  'View Count', 'Submission Count'], axis=1)
 
 #checking activity invasiveness level
 invasiveness_by_activity={}
@@ -235,3 +229,85 @@ high_des_df=high_des_fat.pivot_table(
     aggfunc='mean'
     )
 data_high_des_plot=[high_des_df.iloc[i,1:].dropna() for i in range(len(high_des_df))]
+
+
+
+#demographics
+dem=pd.read_excel(r"C:\Users\rache\MIT Dropbox\Rachel Dunphy\data-RD\Demographics_scores.xlsx")
+dem=dem.drop(['Email','SID','Total Score','Max Points','Status','Submission ID','Submission Time', 'Lateness (H:M:S)',
+                  'View Count', 'Submission Count'], axis=1)
+dem=dem.rename(columns={'1.1: Male (1.0 pts)':'Male', '1.2: Female (1.0 pts)':'Female'})
+dem=dem.set_index('Name')
+males=[]
+females=[]
+othergender=[]
+for index, row in dem.iterrows():
+    name=str(index).strip().lower()
+    if row['Male']==1:
+        males.append(name)
+    elif row['Female']==1:
+        females.append(name)
+    else:
+        othergender.append(name)
+
+flow_df=low_df[low_df['participant'].isin(females)]
+flow_inv=flow_df.pivot_table(
+    index='activity',
+    columns='participant',
+    values='invasiveness',
+    aggfunc='mean'
+    )
+fdata_low_plot=[flow_inv.iloc[i,1:].dropna() for i in range(len(flow_inv))]
+fllabels=flow_inv.index.tolist()
+
+
+fmed_df=med_df[med_df['participant'].isin(females)]
+fmed_inv=fmed_df.pivot_table(
+    index='activity',
+    columns='participant',
+    values='invasiveness',
+    aggfunc='mean'
+    )
+fdata_med_plot=[fmed_inv.iloc[i,1:].dropna() for i in range(len(fmed_inv))]
+fmlabels=fmed_inv.index.tolist()
+
+
+fhigh_df=high_df[high_df['participant'].isin(females)]
+fhigh_inv=fhigh_df.pivot_table(
+    index='activity',
+    columns='participant',
+    values='invasiveness',
+    aggfunc='mean'
+    )
+fdata_high_plot=[fhigh_inv.iloc[i,1:].dropna() for i in range(len(fhigh_inv))]
+fhlabels=fhigh_inv.index.tolist()
+
+mlow_df=low_df[low_df['participant'].isin(males)]
+mlow_inv=mlow_df.pivot_table(
+    index='activity',
+    columns='participant',
+    values='invasiveness',
+    aggfunc='mean'
+    )
+mdata_low_plot=[mlow_inv.iloc[i,1:].dropna() for i in range(len(mlow_inv))]
+mllabels=mlow_inv.index.tolist()
+
+mmed_df=med_df[med_df['participant'].isin(males)]
+mmed_inv=mmed_df.pivot_table(
+    index='activity',
+    columns='participant',
+    values='invasiveness',
+    aggfunc='mean'
+    )
+mdata_med_plot=[mmed_inv.iloc[i,1:].dropna() for i in range(len(mmed_inv))]
+mmlabels=mmed_inv.index.tolist()
+
+mhigh_df=high_df[high_df['participant'].isin(males)]
+mhigh_inv=mhigh_df.pivot_table(
+    index='activity',
+    columns='participant',
+    values='invasiveness',
+    aggfunc='mean'
+    )
+mdata_high_plot=[mhigh_inv.iloc[i,1:].dropna() for i in range(len(mhigh_inv))]
+mhlabels=mhigh_inv.index.tolist()
