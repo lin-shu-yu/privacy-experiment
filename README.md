@@ -11,7 +11,7 @@ Pneumatics: code for operating/testing pneumatic system
 
 ## For running privacy experiment analyses:
 
-first run data-cleaning.R with everything in the data folder; it will output data.RData which can be fed to data-analysis.R
+first run data-cleaning.R with everything in the data(.zip) folder; it will output data.RData which can be fed to data-analysis.R
 
 data-analysis.R will produce data-formodeling.RData, which can be fed to data-modeling.R
 
